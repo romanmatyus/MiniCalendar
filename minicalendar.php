@@ -70,30 +70,19 @@ class MiniCalendar extends Control
 	}
 	
 	/**
-	 * add name day to the result from the source file CSV
+	 * add another day to the result from the source file CSV
 	 * @param string $patern
 	 * @param string $lang
 	 * @param string $date
 	 * @return MiniCalendar
 	 */
-	public function addNameDay($pattern="%s",$lang="", $date="now") 
+	public function addDayFromCsv($pattern="%s",$file="", $date="now") 
 	{
-		$data_from_file = self::parseCsv(__DIR__."/name_day.$lang.csv");
-		if (isset($data_from_file["data"][date("m-d",strtotime($date))]))
-			$this->result .= str_replace("%s",$data_from_file["data"][date("m-d",strtotime($date))],$pattern);
-		return $this;
-	}
-	
-	/**
-	 * add day of public hollyday to the result from the source file CSV
-	 * @param string $patern
-	 * @param string $lang
-	 * @param string $date
-	 * @return MiniCalendar
-	 */
-	public function addPublicHollyDay($pattern="%s",$lang="", $date="now") 
-	{
-		$data_from_file = self::parseCsv(__DIR__."/public.$lang.csv");
+		$data_from_file = self::parseCsv(__DIR__."/$file");
+		if (isset($data_from_file["config"]["year"]))
+			if ($data_from_file["config"]["year"]!=date("Y")) {
+				return $this;
+			}
 		if (isset($data_from_file["data"][date("m-d",strtotime($date))]))
 			$this->result .= str_replace("%s",$data_from_file["data"][date("m-d",strtotime($date))],$pattern);
 		return $this;
@@ -111,8 +100,7 @@ class MiniCalendar extends Control
 			$data = file_get_contents($file);
 			if ($data) {
 				$data = explode("\r\n\r\n",$data);
-				$config = explode("\r\n",$data[0]);
-				foreach ($config as $item) {
+				foreach (explode("\r\n",$data[0]) as $item) {
 					$item = explode(":",$item);
 					if ($item[1]!=="")
 						$config[$item[0]]=$item[1];
