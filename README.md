@@ -1,7 +1,7 @@
 MiniCalendar
 ============
 
-component for fast creating mini calendar
+Nette component for fast creating mini calendar.
 
 Use in factory
 --------------
