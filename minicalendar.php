@@ -44,6 +44,7 @@ class MiniCalendar extends Control
 	
 	/**
 	 * add day of the week to the result
+	 * @param string $patern
 	 * @param string $date
 	 * @return MiniCalendar
 	 */
@@ -56,6 +57,7 @@ class MiniCalendar extends Control
 	
 	/**
 	 * add date to the result
+	 * @param string $patern
 	 * @param string $format
 	 * @param string $date
 	 * @return MiniCalendar
@@ -69,14 +71,44 @@ class MiniCalendar extends Control
 	
 	/**
 	 * add name day to the result from the source file CSV
+	 * @param string $patern
 	 * @param string $lang
 	 * @param string $date
 	 * @return MiniCalendar
 	 */
-	public function addNameDay($pattern="%s",$lang="", $date="now") {
-		// parsing of source file
-		if (file_exists(__DIR__."/name_day.$lang.csv")) {
-			$data = file_get_contents(__DIR__."/name_day.$lang.csv");
+	public function addNameDay($pattern="%s",$lang="", $date="now") 
+	{
+		$data_from_file = self::parseCsv(__DIR__."/name_day.$lang.csv");
+		if (isset($data_from_file["data"][date("m-d",strtotime($date))]))
+			$this->result .= str_replace("%s",$data_from_file["data"][date("m-d",strtotime($date))],$pattern);
+		return $this;
+	}
+	
+	/**
+	 * add day of public hollyday to the result from the source file CSV
+	 * @param string $patern
+	 * @param string $lang
+	 * @param string $date
+	 * @return MiniCalendar
+	 */
+	public function addPublicHollyDay($pattern="%s",$lang="", $date="now") 
+	{
+		$data_from_file = self::parseCsv(__DIR__."/public.$lang.csv");
+		if (isset($data_from_file["data"][date("m-d",strtotime($date))]))
+			$this->result .= str_replace("%s",$data_from_file["data"][date("m-d",strtotime($date))],$pattern);
+		return $this;
+	}
+	
+	/**
+	 * parse source CSV file
+	 * @param string $file
+	 * @return array|NULL
+	 */
+	private function parseCsv($file) 
+	{
+		$result=array();
+		if (file_exists($file)) {
+			$data = file_get_contents($file);
 			if ($data) {
 				$data = explode("\r\n\r\n",$data);
 				$config = explode("\r\n",$data[0]);
@@ -85,19 +117,19 @@ class MiniCalendar extends Control
 					if ($item[1]!=="")
 						$config[$item[0]]=$item[1];
 				}
+				$result['config']=$config;
 				$data = explode("\r\n",$data[1]);
 				
 				foreach ($data as $item) {
 					$item = explode("|",$item);
 					if (isset($item[1]))
 						if ($item[1]!="")
-							$name_day_data[$item[0]]=$item[1];
+							$name_day[$item[0]]=$item[1];
 				}
-				if (isset($name_day_data[date("m-d",strtotime($date))]))
-					$this->result .= str_replace("%s",$name_day_data[date("m-d",strtotime($date))],$pattern);
+				$result['data']=$name_day;
 			}
 		}
-		return $this;
+		return ($result)?$result:NULL;
 	}
 	
 	/**
