@@ -8,8 +8,8 @@ Use in factory
 
     $control = new \NRomiix\MiniCalendar;
     $control->addDayOfTheWeek("Dnes je %s");
-    $control->addPublicHollyDay(" <i>(%s)</i>","sk");
+    $control->addDayFromCsv(" <i>(%s)</i>","public.sk.csv");
     $control->addDate(", %s","j.n.Y. ");
-    $control->addNameDay("Meniny má %s. ","sk");
-    $control->addNameDay("Zajtra má meniny %s.","sk","+1 day");
+    $control->addDayFromCsv("Meniny má %s. ","name_day.sk.csv");
+    $control->addDayFromCsv("Zajtra má meniny %s. ","name_day.sk.csv","+1 day");
     return $control;
