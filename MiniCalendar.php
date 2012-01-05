@@ -39,12 +39,13 @@ class MiniCalendar extends Control
 	/**
 	 * add day of the week to the result
 	 * @param string $patern
+	 * @param string $lang
 	 * @param string $date
 	 * @return MiniCalendar
 	 */
-	public function addDayOfTheWeek($pattern = "%s",$date="now")
+	public function addDayOfTheWeek($pattern = "%s",$lang="",$date="now")
 	{
-		$data_from_file = new MiniCalendarCsv("dayoftheweek.sk.csv");
+		$data_from_file = new MiniCalendarCsv("dayoftheweek.$lang.csv");
 		$day_translate = $data_from_file->getData();
 		if(strtotime($date))
 			$this->result .= str_replace("%s",\Nette\String::lower($day_translate[date("l",strtotime($date))]),$pattern);
