@@ -7,7 +7,8 @@
 
 namespace NRomiix\Components;
 
-use Nette\Application\Control;
+use Nette\Application\Control,
+	NRomiix\Components\MiniCalendar\MiniCalendarCsv;
 /**
  * MiniCalendar
  * component for fast creating mini calendar
@@ -23,9 +24,6 @@ class MiniCalendar extends Control
 	/** @var array */
 	private $item=array();
 	
-	/** @var array */
-	private $day_translate = array("Monday"=>"Pondelok","Tuesday"=>"Utorok","Wednesday"=>"Streda","Thursday"=>"Štvrtok","Friday"=>"Piatok","Saturday"=>"Sobota","Sunday"=>"Nedeľa");
-	
 	/**
 	 * add text string to the result
 	 * @param string $text
@@ -35,7 +33,6 @@ class MiniCalendar extends Control
 	{
 		if (is_string($text))
 			$this->result .= $text;
-			
 		return $this;
 	}
 	
@@ -47,8 +44,10 @@ class MiniCalendar extends Control
 	 */
 	public function addDayOfTheWeek($pattern = "%s",$date="now")
 	{
+		$data_from_file = new MiniCalendarCsv("dayoftheweek.sk.csv");
+		$day_translate = $data_from_file->getData();
 		if(strtotime($date))
-			$this->result .= str_replace("%s",\Nette\String::lower($this->day_translate[date("l",strtotime($date))]),$pattern);
+			$this->result .= str_replace("%s",\Nette\String::lower($day_translate[date("l",strtotime($date))]),$pattern);
 		return $this;
 	}
 	
